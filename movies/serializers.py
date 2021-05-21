@@ -35,3 +35,7 @@ class MovieSerializer(serializers.ModelSerializer):
         movie.genres.set(selected_genres)
 
         return movie
+
+
+class MovieFiltersSerializer(serializers.Serializer):
+    ...
