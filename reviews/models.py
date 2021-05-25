@@ -3,6 +3,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 from django.contrib.auth.models import User
 
+from movies.models import Movie
+
 
 class Review(models.Model):
     stars = models.IntegerField(
@@ -17,5 +19,9 @@ class Review(models.Model):
     critic = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        on_update=models.CASCADE,
+        related_name="reviews",
+    )
+
+    movie = models.ForeignKey(
+        Movie, on_delete=models.CASCADE, related_name="criticism_set"
     )

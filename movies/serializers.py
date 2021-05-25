@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import Movie, Genre
 
+from reviews.serializers import ReviewSerializer
+
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,18 +12,11 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class MovieSerializer(serializers.ModelSerializer):
     genres = GenreSerializer(many=True)
+    criticism_set = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = Movie
-        fields = [
-            "id",
-            "title",
-            "duration",
-            "genres",
-            "launch",
-            "classification",
-            "synopsis",
-        ]
+        fields = "__all__"
         depth = 1
 
     def create(self, validated_data):
