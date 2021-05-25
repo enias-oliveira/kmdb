@@ -38,4 +38,4 @@ class MovieSerializer(serializers.ModelSerializer):
 
 
 class MovieFiltersSerializer(serializers.Serializer):
-    ...
+    title = serializers.CharField()
