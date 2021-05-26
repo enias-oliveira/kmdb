@@ -14,7 +14,7 @@ class Review(models.Model):
         ]
     )
     review = models.TextField()
-    spoiler = models.BooleanField()
+    spoilers = models.BooleanField()
 
     critic = models.ForeignKey(
         User,
