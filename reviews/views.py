@@ -64,13 +64,17 @@ class ReviewViewSet(
 
         try:
             movie = Movie.objects.get(id=pk)
+            review = Review.objects.filter(movie=movie)
+
+            if not review:
+                raise Exception()
+
         except Exception:
             return Response(
                 {"detail": "Not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        review = Review.objects.filter(movie=movie)
         review.update(**serializer.data)
 
         serialized_review = ReviewSerializer(review.first())
