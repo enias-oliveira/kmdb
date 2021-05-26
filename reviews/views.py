@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
+from rest_framework.mixins import CreateModelMixin
 from rest_framework.viewsets import GenericViewSet
 
 from rest_framework.authentication import TokenAuthentication
@@ -20,13 +20,22 @@ class NestedReviewCreateModelMixin(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        if Movie.objects.filter(criticism_set__critic_id=pk).exists():
+        if Movie.objects.filter(
+            criticism_set__critic_id=request.user.id, id=pk
+        ).exists():
             return Response(
                 {"detail": "You already made this review."},
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
 
-        movie = Movie.objects.get(id=pk)
+        try:
+            movie = Movie.objects.get(id=pk)
+        except Exception:
+            return Response(
+                {"detail": "Not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         review = Review.objects.create(
             **serializer.data, critic=request.user, movie=movie
         )
@@ -49,16 +58,13 @@ class ReviewViewSet(
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsCritic]
 
-    def get_queryset(self):
-        return Review.objects.filter(critic=self.kwargs.get("pk"))
-
     def put(self, request, pk, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        movie = Movie.objects.get(id=pk)
-
-        if not movie:
+        try:
+            movie = Movie.objects.get(id=pk)
+        except Exception:
             return Response(
                 {"detail": "Not found."},
                 status=status.HTTP_404_NOT_FOUND,

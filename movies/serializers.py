@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Movie, Genre
 
 from reviews.serializers import ReviewSerializer
+from comments.serializers import CommentSerializer
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -13,6 +14,7 @@ class GenreSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     genres = GenreSerializer(many=True)
     criticism_set = ReviewSerializer(many=True, read_only=True)
+    comment_set = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Movie
